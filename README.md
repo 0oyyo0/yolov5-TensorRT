@@ -1,10 +1,15 @@
-写在前面，利用TensorRT加速推理速度是以时间换取精度的做法，意味着在推理速度上升的同时将会有精度的下降，不过不用太担心，精度下降微乎其微。此外，要有NVIDIA显卡，经测试，CUDA10.2可以支持20系列显卡及以下，30系列显卡需要CUDA11.x的支持，并且目前有bug。
+### 写在前面
+利用TensorRT加速推理速度是以时间换取精度的做法，意味着在推理速度上升的同时将会有精度的下降，不过不用太担心，精度下降微乎其微。此外，要有NVIDIA显卡，经测试，CUDA10.2可以支持20系列显卡及以下，30系列显卡需要CUDA11.x的支持，并且目前有bug。
 
 默认你已经完成了 yolov5的训练过程并得到了.pt模型权值文件。
 
 本文目的仅是带着走通流程。
 
 注意要对应yolov5和tensorrtx的版本。
+
++ ./yolov5包含yolov5训练以及模型初转化阶段的代码
++ ./model_process是将.wts模型转化为.engine模型的代码
++ ./detector是利用.engine模型进行前向推理阶段的代码
 
 ### 我的运行环境(注意OpenCV要选择适合你的visual studio的版本等问题)：
 ```
@@ -35,7 +40,7 @@ cmake-3.21.2-windows-x86_64
 CUDA  cudnn  TensorRT  CMake  OpenCV
  
 
-## 环境安装：
+### 环境安装：
 
 1、安装OpenCV并配置好环境变量
 
@@ -67,7 +72,7 @@ CUDA  cudnn  TensorRT  CMake  OpenCV
 
 4、安装CMake软件备用
 
-## 一、将训练阶段得到的.pt模型转化为.wts中间模型
+### 一、将训练阶段得到的.pt模型转化为.wts中间模型
 
 把tensorrtx里面的yolov5\gen_wts.py加入到yolov5里面，执行
 ```
@@ -95,10 +100,9 @@ generate后关闭
 4、yolov5/include/dirent.h
 
 ​​
+也可使用我的配置好的 
 
-也可使用配置好的 我的
-
-## 二、利用Cmake软件创建VS工程
+### 二、利用Cmake软件创建VS工程
 
 修改CMakeLists.txt中此处为你的opencv安装路径。
 
@@ -108,20 +112,21 @@ generate后关闭
 
 现在关闭Cmake即可。
 
-## 三、wts转化为engine
+### 三、wts转化为engine
 
 VS打开刚刚在bulid目录下创建的工程。
 
 build处vs打开，生成
 
 问题:我的模型只识别一个类，需要更改
+```
 
 cd {tensorrtx}/yolov5/
 
 // update CLASS_NUM in yololayer.h if your model is trained on custom dataset
 
 为1
-
+```
 生成项目。
 
 把之前生成的best.wts复制到build\release目录里面
